@@ -1,10 +1,11 @@
-<project name="MyProject" default="dist" basedir=".">
+<project name="MyProject" default="all" basedir=".">
     <description>
         A simple build script.
     </description>
   <!-- set global properties for this build -->
   <!-- set glassfish.home to point to glassfish installation  -->
-  <property name="glassfish.home" location="/Users/acdesouza/java/glassfish3/"/>
+  <!--<property name="glassfish.home" location="/Users/acdesouza/java/glassfish3/"/>-->
+  <property file="build.properties" />
 
   <property name="testname" value="MDB"/>
   <property name="build" location="build"/>
