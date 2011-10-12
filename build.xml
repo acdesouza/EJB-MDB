@@ -1,0 +1,121 @@
+<project name="MyProject" default="dist" basedir=".">
+    <description>
+        A simple build script.
+    </description>
+  <!-- set global properties for this build -->
+  <!-- set glassfish.home to point to glassfish installation  -->
+  <property name="glassfish.home" location="/Users/acdesouza/java/glassfish3/"/>
+
+  <property name="testname" value="MDB"/>
+  <property name="build" location="build"/>
+
+  <property name="ejb" value="ejb"/>
+  <property name="appclient" value="appclient"/>
+
+  <target name="all">
+    <antcall target="clean"/>
+    <antcall target="build"/>
+    <antcall target="deploy"/>
+    <antcall target="run"/>
+    <antcall target="undeploy"/>
+    <antcall target="clean"/>
+  </target>
+
+  <target name="init">
+    <!-- Create the build directory structure -->
+    <mkdir dir="${build}/${ejb}"/>
+    <mkdir dir="${build}/${appclient}"/>
+  </target>
+
+  <target name="build" description="build" depends="init">
+    <antcall target="build-ejb"/>
+    <antcall target="build-appclient"/>
+  </target>
+
+  <target name="build-ejb"
+        description="Build ejb jar" >
+    <javac classpath="${glassfish.home}/glassfish/lib/javaee.jar"
+           srcdir="."
+           destdir="${build}/${ejb}"
+           includes="${testname}.java,${testname}Bean.java"/>
+    <jar destfile="${build}/${testname}ejb.jar" basedir="${build}/${ejb}"/>
+  </target>
+
+  <target name="build-appclient"
+        description="Build appclient jar" >
+    <javac classpath="${glassfish.home}/glassfish/lib/javaee.jar"
+           srcdir="."
+           destdir="${build}/${appclient}"
+           includes="${testname}.java,${testname}AppClient.java"/>
+    <jar destfile="${build}/${testname}appclient.jar"
+         basedir="${build}/${appclient}"
+         manifest="${testname}Manifest.mf"/>
+  </target>
+
+  <target name="create-resources">
+    <exec executable="${glassfish.home}/bin/asadmin"
+          failonerror="true"
+          vmlauncher="false">
+          <arg line="create-jms-resource --restype javax.jms.Queue --property imqDestinationName=MDBQueue jms/MDBQueue"/>
+    </exec>
+    <exec executable="${glassfish.home}/bin/asadmin"
+          failonerror="true"
+          vmlauncher="false">
+          <arg line="create-jms-resource --restype javax.jms.QueueConnectionFactory jms/MDBQueueConnectionFactory"/>
+    </exec>
+
+    </target>
+
+    <target name="delete-resources">
+      <exec executable="${glassfish.home}/bin/asadmin"
+          failonerror="false"
+          vmlauncher="false">
+          <arg line="delete-jms-resource jms/MDBQueue"/>
+    </exec>
+    <exec executable="${glassfish.home}/bin/asadmin"
+          failonerror="false"
+          vmlauncher="false">
+          <arg line="delete-jms-resource jms/MDBQueueConnectionFactory"/>
+    </exec>
+    </target>
+
+  <target name="deploy"
+          description="deploy">
+    <antcall target="create-resources"/>
+    <exec executable="${glassfish.home}/bin/asadmin"
+          failonerror="true"
+          vmlauncher="false">
+      <arg line="deploy ${build}/${testname}ejb.jar"/>
+    </exec>
+  </target>
+
+  <target name="undeploy"
+          description="undeploy">
+    <exec executable="${glassfish.home}/bin/asadmin"
+          failonerror="true"
+          vmlauncher="false">
+      <arg line="undeploy ${testname}ejb"/>
+    </exec>
+    <antcall target="delete-resources"/>
+  </target>
+
+  <target name="run" >
+    <antcall target="runappclient"/>
+  </target>
+
+  <target name="runappclient"
+          description="execute Application Client">
+    <exec executable="${glassfish.home}/glassfish/bin/appclient"
+          failonerror="true"
+          vmlauncher="false">
+      <arg line="-client ${build}/${testname}appclient.jar"/>
+    </exec>
+  </target>
+
+  <target name="clean"
+          description="clean up" >
+    <delete dir="${build}"/>
+  </target>
+
+
+</project>

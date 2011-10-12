@@ -1,0 +1,2 @@
+Main-Class: ejb30.MDBAppClient
+
