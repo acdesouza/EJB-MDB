@@ -1,0 +1,14 @@
+h1. Montar o ambiente
+
+ * Download do "glassfish":http://download.java.net/glassfish/3.1.1/release/glassfish-3.1.1.zip
+ * Descompactar o zip do glassfish
+ * Editar o arquivo build.properties para apontar para a pasta onde está o glassfish
+
+h1. Executar a aplicação
+
+ * Abra um terminal para levantar o servidor: <pre><code>$GLASSFISH_HOME/glassfish/bin/startserv</code></pre>
+ * Abra um terminal para executar o ant: <pre><code>ant all</code></pre>
+
+h2. Validar o funcionamento
+
+ * No terminal do glassfish deve aparecer a mensagem:<pre><code>|MESSAGE BEAN: Message received: IS-Expert|</code></pre>
