@@ -12,3 +12,7 @@ h1. Executar a aplicação
 h2. Validar o funcionamento
 
  * No terminal do glassfish deve aparecer a mensagem:<pre><code>|MESSAGE BEAN: Message received: IS-Expert|</code></pre>
+
+h2. Referências
+
+https://glassfish.java.net/javaee5/ejb/examples/MDB.html
